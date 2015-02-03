@@ -62,7 +62,7 @@ public class Battleship {
 		}
         gameFrame.start();
         int turnVal = 0;
-        if (serVal == 0 && gameNetwork.getMagicNumber() == 0){
+        if (serVal == JOptionPane.YES_OPTION && gameNetwork.getMagicNumber() == 0){
         	turnVal = 0;
         }
         else if (serVal == 1){
