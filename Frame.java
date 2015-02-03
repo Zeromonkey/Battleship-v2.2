@@ -52,6 +52,8 @@ public class Frame implements ItemListener, ActionListener{
       console = new JTextArea();
       console.setLineWrap(true);
       console.setWrapStyleWord(true);
+      DefaultCaret caret = (DefaultCaret)console.getCaret();
+      caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
       JScrollPane consoleScroll = new JScrollPane(console);
       consoleScroll.setPreferredSize(new Dimension(350,350));
       console.setBackground(Color.BLACK);
