@@ -105,14 +105,13 @@ public class Battleship {
             	
             	if (SID == 0 && B == 1){
             		gameFrame.btnGrid.selectHit(x,y);							//Set (x,y)  enemy square to hit
+            		if(SID > 0){
+            			gameFrame.printConsole("You sunk their " + getShipName(SID) + "!\n");
+            			enemyShipCount--;
+            		}
             	}
             	else if (B == 0){
             		gameFrame.btnGrid.selectMiss(x,y);							//Set (x,y) enemy square to miss
-            	}
-            	else if (SID > 0 && B == 1){
-            		gameFrame.printConsole("You sunk my " + getShipName(SID) + "!\n");
-            		gameFrame.btnGrid.selectHit(x,y);							//Set (x,y) enemy square to miss
-            		enemyShipCount--;
             	}
             	turnVal = 1;
             	gameFrame.setTextColor(Color.GREEN);
