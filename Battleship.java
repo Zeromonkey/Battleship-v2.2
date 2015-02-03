@@ -103,7 +103,7 @@ public class Battleship {
             	int B = Integer.parseInt(shotInfo[2]);
             	int SID = Integer.parseInt(reply[1]);
             	
-            	if (SID == 0 && B == 1){
+            	if (B == 1){
             		gameFrame.btnGrid.selectHit(x,y);							//Set (x,y)  enemy square to hit
             		if(SID > 0){
             			gameFrame.printConsole("You sunk their " + getShipName(SID) + "!\n");
