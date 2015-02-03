@@ -43,8 +43,6 @@ public class Network{
 			verboseOut("Server");
 			Random randomGenerator = new Random();			//creates generator
 			randomGenerator.setSeed(System.currentTimeMillis());//seeds the randomGenerator
-			verboseOut(System.currentTimeMillis());			//gives you the seed
-			verboseOut("");
 			int randomInt = randomGenerator.nextInt(2);		// creates the magic
 															// number
 			verboseOut(randomInt);							// debugging
@@ -80,8 +78,7 @@ public class Network{
 	private static int clientInit() throws IOException {
 		verboseOut("Client init");
 
-		String serverAddress = JOptionPane.showInputDialog("Enter IP Address of The Host");// prompts user for IP
-		verboseOut("past joptionpane");											// address													
+		String serverAddress = JOptionPane.showInputDialog("Enter IP Address of The Host");// prompts user for IP										// address													
 		Socket s = new Socket(serverAddress, 420);								// tries to connect to the server on port 420 blazin
 		out = new PrintWriter(s.getOutputStream(), true);						// sets up print writer
 		input = new BufferedReader(new InputStreamReader(s.getInputStream()));	// sets up reader
