@@ -1,5 +1,3 @@
-//package GUI;
-
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -22,6 +20,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.text.DefaultCaret;
 
 public class Frame implements ItemListener, ActionListener{
 	
@@ -52,6 +51,8 @@ public class Frame implements ItemListener, ActionListener{
       console = new JTextArea();
       console.setLineWrap(true);
       console.setWrapStyleWord(true);
+      DefaultCaret caret = (DefaultCaret)console.getCaret();
+      caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
       JScrollPane consoleScroll = new JScrollPane(console);
       consoleScroll.setPreferredSize(new Dimension(350,350));
       console.setBackground(Color.BLACK);
@@ -203,10 +204,6 @@ public class Frame implements ItemListener, ActionListener{
 	   int yNum = btnGrid.getYSelect();
 	   arg += xNum + "," + yNum;
 	   return arg;
-   }
-   
-   public void setTextColor(Color colour){
-	   console.setForeground(colour);
    }
    
 }

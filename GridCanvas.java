@@ -1,5 +1,3 @@
-//package GUI;
-
 import java.awt.Canvas;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;

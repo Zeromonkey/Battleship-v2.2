@@ -1,4 +1,3 @@
-import java.awt.Color;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -11,11 +10,10 @@ public class Battleship {
     
     public static void main (String [] args){
         gameFrame = new Frame();
-        //The following creates the network and establishes the role of the player.
         serVal = JOptionPane.showConfirmDialog(null, "Are you the server? (Y/N)", "Server?", JOptionPane.YES_NO_OPTION);
-        if(serVal == JOptionPane.YES_OPTION){
+        if(serVal == JOptionPane.YES_OPTION){	        //The following creates the network and establishes the role of the player.
         	try {
-        		gameNetwork = new Network(true, true);
+        		gameNetwork = new Network(true, false);
 			} catch (IOException e) {
 				gameFrame.printConsole("NETWORK Error\n");
 				e.printStackTrace();
@@ -23,7 +21,7 @@ public class Battleship {
         }
         else{
         	try {
-        		gameNetwork = new Network(false, true);
+        		gameNetwork = new Network(false, false);
 			} catch (IOException e) {
 				gameFrame.printConsole("NETWORK Error\n");
 				e.printStackTrace();
@@ -38,10 +36,8 @@ public class Battleship {
         else{
         	gameFrame.printConsole("Ready, Player Two?\n");						//Client
         }
-        
-        //This prints the rules for the player if they don't know them.
         int ruleVal = JOptionPane.showConfirmDialog(null, "Do you know the rules? (Y/N)", "Rules?", JOptionPane.YES_NO_OPTION);
-        if(ruleVal == JOptionPane.NO_OPTION){
+        if(ruleVal == JOptionPane.NO_OPTION){	        	//This prints the rules for the player if they don't know them.
         	printRules();
         }
         boolean placed = gameFrame.ownShips.isPlaced();
@@ -57,18 +53,10 @@ public class Battleship {
         try {
 			gameNetwork.placeBoats();
 		} catch (IOException e1) {
-			System.out.println("HOLY TOLEDO.");
 			e1.printStackTrace();
 		}
         gameFrame.start();
-        int turnVal = 0;
-        if (serVal == 0 && gameNetwork.getMagicNumber() == 0){
-        	turnVal = 0;
-        }
-        else if (serVal == 1){
-        	turnVal = gameNetwork.getMagicNumber();
-        }
-        
+        int turnVal = gameNetwork.getMagicNumber();
         int myShipCount = 5;
         int enemyShipCount = 5;
         while (isAlive(gameNetwork.getServerBool()) == true){
@@ -81,7 +69,6 @@ public class Battleship {
             		try {
 						TimeUnit.MILLISECONDS.sleep(250);
 					} catch (InterruptedException e) {
-						System.out.println("No Shots Fired Today.");
 						e.printStackTrace();
 					}
             	}
@@ -91,31 +78,26 @@ public class Battleship {
 				try {
 					response = gameNetwork.attack(atkArg);
 				} catch (IOException e) {
-					System.out.println("Attack/Response Error.");
 					e.printStackTrace();
-				}
-            	
+				}         	
             	//parse response x,y,B:SID
             	String[] reply = response.split(":");
             	String[] shotInfo = reply[0].split(",");
             	int x = Integer.parseInt(shotInfo[0]);
             	int y = Integer.parseInt(shotInfo[1]);
             	int B = Integer.parseInt(shotInfo[2]);
-            	int SID = Integer.parseInt(reply[1]);
-            	
-            	if (SID == 0 && B == 1){
+            	int SID = Integer.parseInt(reply[1]);          	
+            	if (B == 1){
             		gameFrame.btnGrid.selectHit(x,y);							//Set (x,y)  enemy square to hit
+            		if (SID > 0){
+            			gameFrame.printConsole("You sunk their " + getShipName(SID) + "!\n");
+            			enemyShipCount--;
+            		}
             	}
             	else if (B == 0){
             		gameFrame.btnGrid.selectMiss(x,y);							//Set (x,y) enemy square to miss
             	}
-            	else if (SID > 0 && B == 1){
-            		gameFrame.printConsole("You sunk my " + getShipName(SID) + "!\n");
-            		gameFrame.btnGrid.selectHit(x,y);							//Set (x,y) enemy square to miss
-            		enemyShipCount--;
-            	}
             	turnVal = 1;
-            	gameFrame.setTextColor(Color.GREEN);
         	}
         	else if (turnVal == 1){
         		gameFrame.printConsole("The other player is firing.\n");
@@ -149,7 +131,7 @@ public class Battleship {
             		myShipCount--;
             	}
             	//Creates response x,y,B:SID
-            	String repArg = "" + x + "," + y + "," + B + ":" + SID;
+            	String repArg = x + "," + y + "," + B + ":" + SID;
             	try {
 					gameNetwork.defendReply(repArg);
 				} catch (IOException e) {
@@ -158,10 +140,10 @@ public class Battleship {
             	turnVal = 0;
         	}
         	if (myShipCount == 0){
-        		gameFrame.printConsole("GAME OVER.\nYou win!!!! :)");
+        		gameFrame.printConsole("\n************GAME OVER**************\n                         You lost :(");
         		break;
         	} else if (enemyShipCount == 0){
-        		gameFrame.printConsole("GAME OVER.\nYou lost!!! :(");
+        		gameFrame.printConsole("\n************GAME OVER**************\n                       You won!!! :)");
         		break;
         	}
         }
