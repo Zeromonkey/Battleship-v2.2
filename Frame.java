@@ -206,8 +206,4 @@ public class Frame implements ItemListener, ActionListener{
 	   return arg;
    }
    
-   public void setTextColor(Color colour){
-	   console.setForeground(colour);
-   }
-   
 }
