@@ -1,4 +1,3 @@
-//imports teh things wid da stuff
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,19 +6,16 @@ import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.SecureRandom;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.JOptionPane;
 
 public class Network{
-	// all of the global variables and crap
+	
 	private static boolean server;						//if this boolean is true then it will run in server mode
 	public static Socket clientSocket = null; 			//holds the socket if it is a client
 	private static ServerSocket serverSocketM = null;	//same stuff as above except for server mode
 	public static Socket serverSocketC = null;			//server sockets are weird
-	private static int playerID = -1;					//error checking, if this is -1 some crazy stuff went down
-	private static int otherID = -1;					//see above
 	public static BufferedReader input = null;			//reads from socket
 	private static PrintWriter out = null;				//outputs to socket
 	private static int magicNumber;						//random number to generate
@@ -31,7 +27,6 @@ public class Network{
 	public Network(boolean serv, boolean ver) throws IOException {
 		donePlacing = false;
 		verbose = ver;									// sets verbose
-		verboseOut("Creating Network");					// tells you when it is creating the network
 		server = serv;									// passed if this is the server or not
 		init();											// starts the network
 		verboseOut("Done.");
@@ -41,35 +36,27 @@ public class Network{
 	private static void init() throws IOException {
 		if (server) {										//if it's in server mode
 			verboseOut("Server");
-			Random randomGenerator = new Random();			//creates generator
-			randomGenerator.setSeed(System.currentTimeMillis());//seeds the randomGenerator
-			int randomInt = randomGenerator.nextInt(2);		// creates the magic
-															// number
-			verboseOut(randomInt);							// debugging
-			serverInit(randomInt);							// handles all of the socket crap
-			playerID = 0;									// server is always player ID 0
-			otherID = 1;									// player 2 (client) is always playerID 1
-			magicNumber = randomInt;						// sets the global random number
-
+			magicNumber = (int) (Math.random()*2);			// creates the magic
+			verboseOut(magicNumber);
+			if(magicNumber == 0){
+				serverInit(1);					// handles all of the socket crap
+			} else {
+				serverInit(0);
+			}
 		} else {											// client setup
 			verboseOut("Client");
 			magicNumber = clientInit();						// handles all of the socket crap, as
-															// well as parsing the magic number from
-															// the server
-			playerID = 1;									// client is always 1
-			otherID = 0;									// server is always 0
 		}
 	}
 
-	private static void serverInit(int magic) throws IOException {
+	private static void serverInit(int sentMagic) throws IOException {
 		ServerSocket listener = new ServerSocket(420);							// creates server socket listening on port 420 blazin
 		verboseOut("Server is open");											// debugging
 		Socket socket = listener.accept();										// creates a socket that accepts a connection from the listener
 		input = new BufferedReader(new InputStreamReader(socket.getInputStream()));// creates the buffered reader for reading inbound information
 		out = new PrintWriter(socket.getOutputStream(), true);					// printwriter for output
-		System.out.println("Connection Established.");
-		out.println(magic);														// sends connection established message and the magic number
-		System.out.println("connected");										// debugging
+		verboseOut("Connection Established.");
+		out.println(sentMagic);														// sends connection established message and the magic number
 		serverSocketC = socket;													// creates a copy of the socket to the global variable
 		serverSocketM = listener;												// same with server socket
 
@@ -77,17 +64,14 @@ public class Network{
 
 	private static int clientInit() throws IOException {
 		verboseOut("Client init");
-
-		String serverAddress = JOptionPane.showInputDialog("Enter IP Address of The Host");// prompts user for IP										// address													
-		Socket s = new Socket(serverAddress, 420);								// tries to connect to the server on port 420 blazin
-		out = new PrintWriter(s.getOutputStream(), true);						// sets up print writer
-		input = new BufferedReader(new InputStreamReader(s.getInputStream()));	// sets up reader
-		String answer = input.readLine();										// reads the server response
-																				// if it receives the proper reply
-		System.out.println("connected");									// splits it so you can parse the magic number
-		
-		verboseOut(answer);
+		String serverAddress = JOptionPane.showInputDialog("Enter IP Address of The Host");// prompts user for IP address													
+		Socket s = new Socket(serverAddress, 420);											// tries to connect to the server on port 420 blazin
+		out = new PrintWriter(s.getOutputStream(), true);									// sets up print writer
+		input = new BufferedReader(new InputStreamReader(s.getInputStream()));				// sets up reader
+		String answer = input.readLine();													// reads the server response
+		verboseOut("connected");										
 		clientSocket = s;
+		verboseOut(answer);
 		return Integer.parseInt(answer);
 	}
 
@@ -125,7 +109,7 @@ public class Network{
 	public String attack(String argument) throws IOException {
 		out.println(argument);						// sends the raw argument
 		String reply = null;
-		while (reply == null) {						// waits for a reply
+		while (reply == null) {
 			try {
 				TimeUnit.MILLISECONDS.sleep(250);
 				reply = input.readLine();
@@ -141,24 +125,19 @@ public class Network{
 	// uses defendReply to finish the transaction
 	public String defend() throws IOException {
 		String reply = null;
-
-		while (reply == null) {// waits for message
+		while (reply == null) {
 			try {
 				TimeUnit.MILLISECONDS.sleep(250);
 				reply = input.readLine();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-
 		return reply;
 	}
 
 	public void defendReply(String argument) throws IOException {
-
 		out.println(argument);								// just sends the message it is passed. so don't fuck it up AJ
-
 	}
 
 	// this is used in phase one, the server waits for the client to finish and
@@ -169,51 +148,50 @@ public class Network{
 			while (reply == null) {
 				try {
 					TimeUnit.SECONDS.sleep(1);
-					reply = input.readLine();				// wait for a message
+					reply = input.readLine();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
-			if (reply.contentEquals("PLACED")) {			// if it is the correct message
-				while (donePlacing == false) {				// wait until done placing is true
+			if (reply.contentEquals("PLACED")) {
+				while (donePlacing == false) {
 					try {
-						TimeUnit.SECONDS.sleep(1);
+						TimeUnit.MILLISECONDS.sleep(200);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
 				}
-				out.println("CONTINUE");					// sends the message to continue
+				out.println("CONTINUE");
 			} else {
-				System.out.println("error");
+				verboseOut("error");
 				dieDieDie();								// boom headshot
 			}
 		}
 
 		else {												// client version
-			while (donePlacing == false) {					// waits until done placing is false
-
+			while (donePlacing == false) {
+				try {
+					TimeUnit.MILLISECONDS.sleep(200);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
-			out.println("PLACED");							// send placed message
-			while (reply == null) {							// waits for a reply
-				reply = input.readLine();
+			out.println("PLACED");
+			while (reply == null) {
+				try {
+					reply = input.readLine();
+					TimeUnit.MILLISECONDS.sleep(200);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
-			if (reply.contentEquals("CONTINUE")) {			// if it receives the correct reply
+			if (reply.contentEquals("CONTINUE")) {
 				verboseOut("continue to next phase");
 			} else {
-				System.out.println("error");
+				verboseOut("error");
 				dieDieDie();								// boom headshot
 			}
 		}
-	}
-
-	// gets player ID
-	public static int getPid() {
-		return playerID;
-	}
-
-	// gets other player IDs
-	public static int getOtherID() {
-		return otherID;
 	}
 
 	// closes all of the connections
@@ -225,16 +203,13 @@ public class Network{
 
 	// kills program... boom headshot
 	public static void dieDieDie() throws IOException {
-		// kills program very violently
 		SecureRandom random = new SecureRandom();
-
 		System.out.println("DIE DIE DIE!!!!1");
 		out.print("DIE DIE DIE!!!!1");
 		System.out.println(new BigInteger(130, random).toString(32) + new BigInteger(130, random).toString(32));
 		out.println(new BigInteger(130, random).toString(32) + new BigInteger(130, random).toString(32));
 		exit();
 		alive = false;
-
 	}
 
 	// returns the magic number
@@ -263,11 +238,4 @@ public class Network{
 		}
 	}
 	
-	private static void verboseOut(long output)
-	{
-		if(verbose)
-		{
-			System.out.println(output);
-		}
-	}
 }
