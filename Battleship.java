@@ -1,4 +1,3 @@
-import java.awt.Color;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -99,7 +98,6 @@ public class Battleship {
             		gameFrame.btnGrid.selectMiss(x,y);							//Set (x,y) enemy square to miss
             	}
             	turnVal = 1;
-            	gameFrame.setTextColor(Color.GREEN);
         	}
         	else if (turnVal == 1){
         		gameFrame.printConsole("The other player is firing.\n");
