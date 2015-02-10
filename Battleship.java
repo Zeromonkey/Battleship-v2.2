@@ -15,7 +15,7 @@ public class Battleship {
         	try {
         		gameNetwork = new Network(true, false);
 			} catch (IOException e) {
-				gameFrame.printConsole("NETWORK Error\n");
+				System.out.println("NETWORK Error");
 				e.printStackTrace();
 			}
         }
@@ -23,7 +23,7 @@ public class Battleship {
         	try {
         		gameNetwork = new Network(false, false);
 			} catch (IOException e) {
-				gameFrame.printConsole("NETWORK Error\n");
+				System.out.println("NETWORK Error");
 				e.printStackTrace();
 			}
         }
