@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.math.BigInteger;
+import java.net.Inet4Address;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.SecureRandom;
@@ -52,14 +53,15 @@ public class Network{
 	private static void serverInit(int sentMagic) throws IOException {
 		ServerSocket listener = new ServerSocket(420);							// creates server socket listening on port 420 blazin
 		verboseOut("Server is open");											// debugging
+		JOptionPane.showMessageDialog(null, "Waiting for the client...\nYour IP address is " + Inet4Address.getLocalHost().getHostAddress() + "\n Press 'OK' once the client is ready.",
+										"Preparing Battleship", JOptionPane.INFORMATION_MESSAGE);
 		Socket socket = listener.accept();										// creates a socket that accepts a connection from the listener
 		input = new BufferedReader(new InputStreamReader(socket.getInputStream()));// creates the buffered reader for reading inbound information
 		out = new PrintWriter(socket.getOutputStream(), true);					// printwriter for output
 		verboseOut("Connection Established.");
-		out.println(sentMagic);														// sends connection established message and the magic number
+		out.println(sentMagic);													// sends connection established message and the magic number
 		serverSocketC = socket;													// creates a copy of the socket to the global variable
 		serverSocketM = listener;												// same with server socket
-
 	}
 
 	private static int clientInit() throws IOException {
