@@ -13,9 +13,9 @@ public class Battleship {
         serVal = JOptionPane.showConfirmDialog(null, "Are you the server? (Y/N)", "Server?", JOptionPane.YES_NO_OPTION);
         if(serVal == JOptionPane.YES_OPTION){	        //The following creates the network and establishes the role of the player.
         	try {
-        		gameNetwork = new Network(true, false);
+        		gameNetwork = new Network(true, true);
 			} catch (IOException e) {
-				System.out.println("NETWORK Error");
+				System.out.println("NETWORK Error\n");
 				e.printStackTrace();
 			}
         }
@@ -36,6 +36,7 @@ public class Battleship {
         else{
         	gameFrame.printConsole("Ready, Player Two?\n");						//Client
         }
+        gameFrame.printConsole("Place your ships on the bottom right grid.\n");
         int ruleVal = JOptionPane.showConfirmDialog(null, "Do you know the rules? (Y/N)", "Rules?", JOptionPane.YES_NO_OPTION);
         if(ruleVal == JOptionPane.NO_OPTION){	        	//This prints the rules for the player if they don't know them.
         	printRules();
@@ -57,8 +58,8 @@ public class Battleship {
 		}
         gameFrame.start();
         int turnVal = gameNetwork.getMagicNumber();
-        int myShipCount = 5;
-        int enemyShipCount = 5;
+        int myShipCount = 1;
+        int enemyShipCount = 1;
         while (isAlive(gameNetwork.getServerBool()) == true){
         	if (turnVal == 0){
         		gameFrame.printConsole("Choose a square to launch a missle at.\n");
@@ -147,6 +148,7 @@ public class Battleship {
         		break;
         	}
         }
+        gameFrame.btnGrid.removeActnEvt();
     }
     
     private static boolean isAlive(boolean serverOrClient){
@@ -186,28 +188,23 @@ public class Battleship {
     }
 
 	public static void printRules(){
-		gameFrame.printConsole("*****Rules for BattleShip*****\n" +
-    			"\nGame Objective\n" +
-    			"The object of Battleship is to try and sink all of the other player's before they sink all of your ships. All of the other player's ships are somewhere on his/her board.\n" +
-    			"You try and hit them by calling out the coordinates of one of the squares on the board.\n" + 
-    			"The other player also tries to hit your ships by calling out coordinates.\n" +
-    			"Neither you nor the other player can see the other's board so you must try to guess where they are.\n" +
-    			"Each board in the physical game has two grids:  the lower (horizontal) section for the player's ships and the upper part (vertical during play) for recording the player's guesses.\n" +
-    			"\nStarting a New Game\n"+
-    			"Each player places the 5 ships somewhere on their board.\n" +
-    			"The ships can only be placed vertically or horizontally. Diagonal placement is not allowed.\n" +
-    			"No part of a ship may hang off the edge of the board.  Ships may not overlap each other.\n" +
-    			"No ships may be placed on another ship. Once the guessing begins, the players may not move the ships.\n" +
-    			"The 5 ships are:  Carrier (occupies 5 spaces), Battleship (4), Cruiser (3), Submarine (3), and Destroyer (2).\n" +
-    			"\nPlaying the Game\n" +
-    			"Player's take turns guessing by calling out the coordinates. The opponent responds with \"hit\" or \"miss\" as appropriate.\n" +
-    			"Both players should mark their board with pegs:  red for hit, white for miss.\n" +
-    			"For example, if you call out F6 and your opponent does not have any ship located at F6, your opponent would respond with \"miss\".\n" +
-    			"You record the miss F6 by placing a white peg on the lower part of your board at F6. Your opponent records the miss by placing.\n" +
-    			"When all of the squares that one your ships occupies have been hit, the ship will be sunk.\n" +
-    			"You should announce \"hit and sunk\".\n" +
-    			"In the physical game, a red peg is placed on the top edge of the vertical board to indicate a sunk ship.\n" +
-    			"As soon as all of one player's ships have been sunk, the game ends.\n" +
-    			"\n*****************************\n");
+		gameFrame.printConsole("********Rules for BattleShip********\n" +
+    			"\n***********Game Objective***********\n" +
+    			"The object of Battleship is to try and sink all of the other player's ships (upper left) before they sink all of yours (bottom right). " +
+    			"You try and hit them by selecting the coordinate of one of the squares on the board and firing. " +
+    			"Neither you nor the other player can see the other board so you must try to guess where they are. " +
+    			"\n\n********Starting a New Game********\n"+
+    			"Each player places the 5 ships somewhere on their board by clicking on the ship you want to place and then clicking on a coordinate on your grid (bottom right). " +
+    			"The ships can only be placed vertically or horizontally. " +
+    			"Ships cannot overlap each other or be placed off the board. " +
+    			"Once the guessing begins, the players may not move the ships. " +
+    			"The 5 ships are:  Carrier (5), Battleship (4), Cruiser (3), Submarine (3), and Patrol Boat (2)." +
+    			"\n\n**********Playing the Game**********\n" +
+    			"Player's take turns guessing by selecting coordinates and firing. " +
+    			"It will return either hit or miss. " +
+    			"When all of the squares that one your ships occupies have been hit, the ship will be sunk. " +
+    			"All hits and misses will be recorded automatically for you. " +
+    			"As soon as all of one player's ships have been sunk, the game ends, and the player who still has ships remaining wins." +
+    			"\n**********************************\n");
     }
 }
