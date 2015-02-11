@@ -16,6 +16,7 @@ public class ButtonGrid extends Component {
 	private CoordinateButton[][] grid;
 	private int xSelect = 0;
 	private int ySelect = 0;
+	private ActionListener selectEvt;
 
 	public ButtonGrid(int width, int height, JPanel panel, Frame frame) {
 		this.frame = frame;
@@ -37,15 +38,24 @@ public class ButtonGrid extends Component {
 		}
 	}
 	public void addActnEvt(){
+		selectEvt = new ActionListener(){
+			public void actionPerformed(ActionEvent evt) {
+				xSelect = ((CoordinateButton) evt.getSource()).getXCor();
+				ySelect = ((CoordinateButton) evt.getSource()).getYCor();
+				frame.printConsole("Button " + xSelect + ", " + ySelect + " selected!\n");
+			}
+		};
 		for (int x = 0; x < grid.length; x++) {
 			for (int y = 0; y < grid[0].length; y++) {
-				grid[x][y].addActionListener(new ActionListener(){
-					public void actionPerformed(ActionEvent evt) {
-						xSelect = ((CoordinateButton) evt.getSource()).getXCor();
-						ySelect = ((CoordinateButton) evt.getSource()).getYCor();
-						frame.printConsole("Button " + xSelect + ", " + ySelect + " selected!\n");
-					}
-				});
+				grid[x][y].addActionListener(selectEvt);
+			}
+		}
+	}
+	
+	public void removeActnEvt(){
+		for (int x = 0; x < grid.length; x++) {
+			for (int y = 0; y < grid[0].length; y++) {
+				grid[x][y].removeActionListener(selectEvt);
 			}
 		}
 	}
